@@ -12,18 +12,18 @@ public:
     vector<int> Sum;
 
     for(int i=0;i<a.size();i++)
-        for(int j=0;j<b.size();j++)
-            Sum.push_back(a[i] + b[j]);
+      for(int j=0;j<b.size();j++)
+        Sum.push_back(a[i] + b[j]);
 
     sort(Sum.begin(),Sum.end());
 
     int Count=0;
     for(int i=0;i<c.size();i++) {
-        for(int j=0;j<d.size();j++) {
-            int CurSum = -(c[i]+d[j]);
-            Count += upper_bound(Sum.begin(), Sum.end(), CurSum) - lower_bound(Sum.begin(), Sum.end(), CurSum);
-            }
+      for(int j=0;j<d.size();j++) {
+        int CurSum = -(c[i]+d[j]);
+        Count += upper_bound(Sum.begin(), Sum.end(), CurSum) - lower_bound(Sum.begin(), Sum.end(), CurSum);
         }
+      }
 
     return Count;
     }
