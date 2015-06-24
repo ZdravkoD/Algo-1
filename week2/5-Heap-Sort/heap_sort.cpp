@@ -35,8 +35,8 @@ private:
 
 public:
   // Sorts a sequence of integers.
-  void Sort(int* sequence, int Size) {
-    int *Temp = new int[Size];
+  void sort(int* sequence, int size) {
+    int *Temp = new int[size];
     for(int i=0;i<Size;i++)
       Temp[i] = sequence[i];
 
@@ -53,7 +53,6 @@ public:
       }
 
     delete[] Temp;
-  }
 };
 
 int main()
@@ -61,7 +60,7 @@ int main()
     HeapSort H;
     int Size=7;
     int Arr[7] = {20,16,12,3,8,5,10};
-    H.Sort(Arr,Size);
+    H.sort(Arr,Size);
 
     for(int i=0;i<Size;i++) {
       cout << Arr[i] << endl;
