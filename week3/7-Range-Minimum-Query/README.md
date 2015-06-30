@@ -22,6 +22,7 @@ Each of the following lines will contain a single
 command in the format specified above.
 
 ## Example
+
 ```
 16 8
 19 11 15 4 7 13 11 2 3 5 12 7 23 17 4 6
@@ -32,7 +33,7 @@ min 5 10
 set 4 3
 min 4 8
 \>2
-min 0 7
+min 0 6
 \>3
 set 15 8
 min 15 15
