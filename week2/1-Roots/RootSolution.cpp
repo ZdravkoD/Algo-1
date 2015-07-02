@@ -2,7 +2,7 @@
 
 using namespace std;
 
-const double Eps=0.00001;
+const double Eps=0.000001;
 
 // function to calculate root
 class Root  {
@@ -31,8 +31,9 @@ int main()
 {
   Root R;
 
-  for(double i=0;i<=100;i++)
-    printf("%f - %10.5f\n", i, R.Square(i));
+  int n;
+  scanf("%d",&n);
+  printf("%.5f\n", R.Square(n));
 
   return 0;
 }

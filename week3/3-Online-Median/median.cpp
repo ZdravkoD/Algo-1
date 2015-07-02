@@ -53,7 +53,15 @@ public:
 int main()
 {
   Median M;
-  cout << M.insert(5) << endl;
+  int n;
+  cin >> n;
+  for(int i=0;i<n;i++) {
+    int tmp;
+    cin >> tmp;
+    cout << M.insert(tmp) << endl;
+  }
+
+  /*cout << M.insert(5) << endl;
   cout << M.insert(6) << endl;
   cout << M.insert(7) << endl;
   cout << M.insert(4) << endl;
@@ -62,7 +70,7 @@ int main()
   cout << M.insert(20) << endl;
   cout << M.insert(30) << endl;
   cout << M.insert(40) << endl;
-  cout << M.insert(50) << endl;
+  cout << M.insert(50) << endl;*/
 
   return 0;
 }

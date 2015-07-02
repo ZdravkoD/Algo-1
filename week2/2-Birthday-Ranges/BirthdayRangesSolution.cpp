@@ -5,8 +5,10 @@
 
 using namespace std;
 
-#define BIRTHDAYS 12
-#define RANGES 6
+//#define BIRTHDAYS 12
+//#define RANGES 6
+int BIRTHDAYS;
+int RANGES;
 int Count_B[366];
 
 class CountSort {
@@ -78,6 +80,11 @@ public:
       else
         first = Count_B[Ranges[i].first-1];
 
+      if(i==3) {
+      for(int d=Ranges[i].first;d<=Ranges[i].second;d++)
+        cout << Count_B[d] << " ";
+      cout << endl;
+      }
       Result[i] = second - first;
       }
 
@@ -87,15 +94,17 @@ public:
 
 int main()
 {
-  int Birthdays[BIRTHDAYS] = {0,10,31,53,23,66,78,66,5,4,43,23}; // length = 12
+  cin >> BIRTHDAYS >> RANGES;
+  int *Birthdays = new int[BIRTHDAYS];
+  for(int i=0;i<BIRTHDAYS;i++)
+    cin >> Birthdays[i];
 
-  pair<int, int> Ranges[RANGES];
-  Ranges[0]=make_pair( 0,  2);
-  Ranges[1]=make_pair( 3, 20);
-  Ranges[2]=make_pair( 2, 44);
-  Ranges[3]=make_pair(40, 80);
-  Ranges[4]=make_pair( 0,365);
-  Ranges[5]=make_pair( 0,  0);
+  pair<int, int> *Ranges = new pair<int, int>[RANGES];
+  for(int i=0;i<RANGES;i++) {
+    int a,b;
+    cin >> a >> b;
+    Ranges[i] = make_pair(a,b);
+  }
 
   BirthdayRanges BR;
   int *Result = BR.birthdays_count(Birthdays,Ranges);

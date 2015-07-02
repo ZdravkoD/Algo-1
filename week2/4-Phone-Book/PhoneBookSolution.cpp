@@ -36,15 +36,18 @@ public:
         if(phoneBook[mid].number == numbers[i]) {
           Result.push_back(phoneBook[mid].name);
           break;
-          }
+        }
         else if(phoneBook[mid].number < numbers[i]) {
           lo = mid+1;
-          }
-        else    {
+        }
+        else {
           hi = mid-1;
-          }
         }
       }
+
+      if(lo>hi)
+        Result.push_back(""); // empty result
+    }
 
     return Result;
     }
@@ -52,8 +55,19 @@ public:
 
 int main()
 {
-  vector<Contact> phoneBook = {Contact(1,"Stanislav"), Contact(15,"Rado"), Contact(6,"Ivan"), Contact(8,"Ivan")};
-  vector<int> numbers = {1, 6, 10, 15, 8};
+  int n, m;
+  cin >> n >> m;
+  vector<Contact> phoneBook;
+  vector<int> numbers(m);
+  for(int i=0;i<n;i++) {
+    int t;
+    string s;
+    cin >> t >> s;
+    phoneBook.push_back(Contact(t,s));
+  }
+  for(int i=0;i<m;i++) {
+    cin >> numbers[i];
+  }
 
   PhoneBook P;
   vector<string> Result = P.lookupNames(phoneBook, numbers);

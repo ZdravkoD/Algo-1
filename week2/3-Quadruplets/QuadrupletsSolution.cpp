@@ -31,10 +31,13 @@ public:
 
 int main()
 {
-    vector<int> a = { 5, 3,4};
-    vector<int> b = {-2,-1,6};
-    vector<int> c = {-1,-2,4};
-    vector<int> d = {-1,-2,7};
+    int n;
+    cin >> n;
+    vector<int> a(n),b(n),c(n),d(n);
+    for(int i=0;i<n;i++) cin >> a[i];
+    for(int i=0;i<n;i++) cin >> b[i];
+    for(int i=0;i<n;i++) cin >> c[i];
+    for(int i=0;i<n;i++) cin >> d[i];
 
     Quadruplets Q;
     cout << Q.zeroQuadrupletsCount(a,b,c,d) << endl;
