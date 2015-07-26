@@ -6,7 +6,7 @@
 
 using namespace std;
 
-typedef pair<string,string> pss; // for ease
+typedef pair<pair<string,int>,string> ppsis; // for ease
 
 // set priority of protocols
 std::map<string,int> Protocol = {
@@ -20,18 +20,23 @@ std::map<string,int> Protocol = {
 class BandwidthManager {
 private:
   struct CompareProtocol {
-    bool operator() (const pss &a, const pss &b) {
-      return Protocol[a.first] > Protocol[b.first];
+    bool operator() (const ppsis &a, const ppsis &b) {
+      if(Protocol[a.first.first]==Protocol[b.first.first])
+        return a.first.second>b.first.second;
+
+      return Protocol[a.first.first]>Protocol[b.first.first];
     }
   };
 
-  priority_queue<pss, vector<pss>, CompareProtocol> Q; // the "device"
+  priority_queue<ppsis, vector<ppsis>, CompareProtocol> Q; // the "device"
+
 
 public:
 
   //receives a packet with specified protocol and payload
   void rcv(string protocol, string payload) {
-    Q.push( make_pair(protocol, payload) );
+    static int count=0;
+    Q.push(make_pair(make_pair(protocol,count++), payload));
   }
 
   //returns the payload of the packet which should be sent
@@ -48,21 +53,22 @@ public:
 
 int main()
 {
+  int n;
+  cin >> n;
+
   BandwidthManager BM;
 
-  BM.rcv("UDP","zxchzrkljhklzrjlkhklzr");
-  BM.rcv("TCP","ghljkajklhgjklare");
-  BM.rcv("ICMP","ping87.129.54.123");
-  cout << BM.send() << endl;
-  cout << BM.send() << endl;
-
-  BM.rcv("DNS","maps.google.com");
-  cout << BM.send() << endl;
-
-  BM.rcv("TCP","aejkgjkaegaegae");
-  cout << BM.send() << endl;
-  cout << BM.send() << endl;
-  cout << BM.send() << endl;
+  for(int i=0;i<n;i++) {
+    string cmd,Protocol,Payload;
+    cin >> cmd;
+    if(cmd=="rcv") {
+      cin >> Protocol >> Payload;
+      BM.rcv(Protocol,Payload);
+    }
+    else {
+      cout << BM.send() << endl;
+    }
+  }
 
   return 0;
 }
