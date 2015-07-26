@@ -1,49 +1,51 @@
-#include <iostream>
+#include <cstdio>
+#include <string>
 
 using namespace std;
 
-class Node {
-public:
-  Node(int value,Node *left, Node *right) { // constructor
-    this->value = value;
-    this->left = left;
-    this->right = right;
+int n;
+bool isBST(int Arr[],const int &Index,const int &cmpValue,const bool &isOnLeft)
+{
+  if(Index!=0) {
+    bool f=(Index%2 && Arr[Index]>=Arr[(Index-1)/2]);
+    bool s=(Index%2==0 && Arr[Index]<=Arr[(Index-1)/2]);
+    bool r=(isOnLeft && Arr[Index]>=cmpValue) || (!isOnLeft && Arr[Index]<=cmpValue);
+    if(f || s || r)
+      return false;
+  }
+
+  int leftChild=Index*2+1;
+  int rightChild=Index*2+2;
+  if(leftChild<n && Arr[leftChild]>0) { // if there is left child
+    if(Arr[leftChild]>Arr[Index] ||
+       isBST(Arr,leftChild,cmpValue,isOnLeft)==false ||
+       isBST(Arr,leftChild,Arr[Index],true)==false)
+      return false;
+    }
+  if(rightChild<n && Arr[rightChild]>0) { // if there is left child
+    if(Arr[rightChild]<Arr[Index] ||
+       isBST(Arr,rightChild,cmpValue,isOnLeft)==false ||
+       isBST(Arr,rightChild,Arr[Index],false)==false)
+      return false;
     }
 
-  int value;
-  Node* left;
-  Node* right;
-};
-
-class BST {
-public:
-
-  // Checks if a binary tree is a binary search tree.
-  bool isBST(Node* root) {
-    bool l=true,r=true;
-    if(root->left != NULL) {
-      if(root->left->value < root->value)
-        l = isBST(root->left);
-      else
-        return false;
-      }
-    if(root->right != NULL) {
-      if(root->right->value >= root->value)
-        r = isBST(root->right);
-      else
-        return false;
-      }
-    return l && r;
-    }
-};
+  return true;
+}
 
 int main()
 {
-  Node N(1,NULL,NULL), N1(5,NULL,NULL), N2(2,NULL,NULL), N3(8,NULL,NULL), N4(4,&N,&N1), N5(7,&N2,&N3), N6(6,&N4,&N5);
-  Node M(1,NULL,NULL), M1(5,NULL,NULL), M2(2,NULL,NULL), M3(8,NULL,NULL), M4(4,&M,&M1), M5(7,&M2,&M3), M6(200,&M4,&M5);
+  scanf("%d",&n);
+  if(n<=0)
+    return 0;
 
-  BST B;
-  cout << B.isBST(&N6) << endl;
-  cout << B.isBST(&M6) << endl;
+  int *Arr = new int[n];
+  for(int i=0;i<n;i++)
+    scanf("%d",&Arr[i]);
+
+  if(n==1 || (isBST(Arr,1,Arr[0],true) && isBST(Arr,2,Arr[0],false)))
+    printf("YES");
+  else
+    printf("NO");
+
   return 0;
 }
