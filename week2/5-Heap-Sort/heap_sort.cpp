@@ -3,68 +3,75 @@
 #include <algorithm>
 
 using namespace std;
+int n;
 
 class HeapSort {
 
 private:
   // Creates a heap
-  void heapify(int* Arr, const int Size, int cur)  {
-    if(cur*2+1>=Size)
+  void heapify(int* Arr, const int n, int cur)  {
+    if(cur*2+1>=n)
       return;
 
-    if(cur*2+2 < Size)  {
-      if(Arr[cur] > Arr[cur*2+1] && Arr[cur*2+1]<Arr[cur*2+2])  {
+    int leftChild=cur*2+1;
+    int rightChild=cur*2+2;
+
+    if(rightChild < n)  {
+      if(Arr[cur]>Arr[leftChild] && Arr[leftChild]<=Arr[rightChild])  {
         swap(Arr[cur],Arr[cur*2+1]);
 
-        heapify(Arr,Size,cur*2+1);
+        heapify(Arr,n,leftChild);
         }
-      else if(Arr[cur] > Arr[cur*2+2] && Arr[cur*2+2]<Arr[cur*2+1]) {
-        swap(Arr[cur],Arr[cur*2+2]);
+      else if(Arr[cur]>Arr[rightChild] && Arr[rightChild]<=Arr[leftChild]) {
+        swap(Arr[cur],Arr[rightChild]);
 
-        heapify(Arr,Size,cur*2+2);
+        heapify(Arr,n,rightChild);
         }
       }
-    else  {
-      if(Arr[cur] > Arr[cur*2+1]) {
-        swap(Arr[cur],Arr[cur*2+1]);
+    else if(leftChild < n) {
+      if(Arr[cur] > Arr[leftChild]) {
+        swap(Arr[cur],Arr[leftChild]);
 
-        heapify(Arr,Size,cur*2+1);
+        heapify(Arr,n,leftChild);
         }
       }
   }
 
 public:
   // Sorts a sequence of integers.
-  void sort(int* sequence, int size) {
-    int *Temp = new int[size];
-    for(int i=0;i<Size;i++)
+  void sort(int* sequence, int n) {
+    int *Temp = new int[n];
+    for(int i=0;i<n;i++)
       Temp[i] = sequence[i];
 
-    int cur = Size/2 - 1;
+    int cur = n/2 - 1;
 
     for(;cur>=0;cur--)  {
-      heapify(Temp,Size,cur);
+      heapify(Temp,n,cur);
       }
 
-    for(int i=0;i<Size;i++)  {
+    for(int i=0;i<n;i++)  {
       sequence[i]=Temp[0];
-      Temp[0] = Temp[Size-i-1];
-      heapify(Temp,Size-i-1,0);
+      Temp[0] = Temp[n-i-1];
+      heapify(Temp,n-i-1,0);
       }
 
     delete[] Temp;
+  }
 };
 
 int main()
 {
-    HeapSort H;
-    int Size=7;
-    int Arr[7] = {20,16,12,3,8,5,10};
-    H.sort(Arr,Size);
+  cin >> n;
+  HeapSort H;
+  int *Arr = new int[n];
+  for(int i=0;i<n;i++)
+    cin >> Arr[i];
 
-    for(int i=0;i<Size;i++) {
-      cout << Arr[i] << endl;
-      }
+  H.sort(Arr,n);
 
-    return 0;
+  for(int i=0;i<n;i++)
+    cout << Arr[i] << " ";
+
+  return 0;
 }
