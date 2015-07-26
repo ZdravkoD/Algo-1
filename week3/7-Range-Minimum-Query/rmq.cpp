@@ -21,6 +21,10 @@ public:
       Tree[i] = INT_MAX;
   }
 
+  ~RMQ() {
+    delete[] Tree;
+  }
+
   // sets the value at index
   void set(int index, int value) {
     index+=size;
@@ -28,10 +32,12 @@ public:
     index/=2;
 
     while(index>0) {
-      if(Tree[index]>value)
-        Tree[index]=value;
-      else
-        return;
+      /*if(Tree[index]>value)
+        Tree[index]=value;*/
+      int leftChild = index*2;
+      int rightChild = index*2+1;
+      Tree[index] = (Tree[leftChild] > Tree[rightChild] ? Tree[rightChild] : Tree[leftChild]);
+
       index/=2;
     }
   }
@@ -46,7 +52,6 @@ public:
       return Min > Tree[endIndex] ? Tree[endIndex] : Min;
 
     while(endIndex > startIndex) {
-
       if(endIndex%2==0) {
         Min = (Min > Tree[endIndex] ? Tree[endIndex] : Min);
         endIndex/=2;
@@ -61,6 +66,11 @@ public:
         Min = (Min > Tree[startIndex] ? Tree[startIndex] : Min);
         startIndex/=2;
         startIndex++;
+
+        if(startIndex==endIndex) {
+          Min = (Min > Tree[startIndex] ? Tree[startIndex] : Min);
+          break;
+        }
       }
       else {
         startIndex/=2;
