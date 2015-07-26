@@ -1,7 +1,8 @@
-#include <iostream>
+#include <cstdio>
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <cstring>
 
 using namespace std;
 
@@ -43,15 +44,18 @@ public:
     vector<Contact>::iterator it = lower_bound(Vec.begin(),Vec.end(),Contact(name,0),Comp);
 
     if(it == Vec.end() || it->name != name)
-      cout << "NOT FOUND!" << endl;
+//      cout << "NOT FOUND!" << endl;
+      printf("NOT FOUND!\n");
     else
-      cout << it->number << endl;
+      //cout << it->number << endl;
+      printf("%d\n",it->number);
   }
 
   //list all records in an alphabetical order
   void list() {
     for(unsigned int i=0;i<Vec.size();i++)
-      cout << Vec[i].name << " - " << Vec[i].number << endl;
+      //cout << Vec[i].name << " - " << Vec[i].number << endl;
+      printf("%s %d\n",Vec[i].name.c_str(),Vec[i].number);
   }
 
   //remove a record for a given name
@@ -65,29 +69,30 @@ public:
 
 int main()
 {
+  int n;
+  scanf("%d",&n);
   PhoneBook P;
-  P.insert(Contact("E",1));
-  P.insert(Contact("F",2));
-  P.insert(Contact("I",3));
-  P.insert(Contact("J",4));
-  P.insert(Contact("E",1114));
-  P.insert(Contact("G",1223124));
-  P.insert(Contact("B",1224));
-  P.list();
-  cout << endl;
 
-  P.lookup("S");
-  P.lookup("E");
-  P.lookup("A");
-
-  P.remove("A");
-  P.list();
-  cout << endl;
-
-  P.remove("B");
-  P.list();
-
-
+  for(int i=0;i<n;i++) {
+    char cmd[20],name[1000];
+    int number;
+    scanf("%s",cmd);
+    if(strcmp(cmd,"insert")==0) {
+      scanf("%d%s",&number,name);
+      P.insert(Contact(name,number));
+    }
+    else if(strcmp(cmd,"lookup")==0) {
+      scanf("%s",name);
+      P.lookup(name);
+    }
+    else if(strcmp(cmd,"list")==0) {
+      P.list();
+    }
+    else {
+      scanf("%s",name);
+      P.remove(name);
+    }
+  }
 
   return 0;
 }
