@@ -1,6 +1,7 @@
-#include <iostream>
+#include <cstdio>
 
 using namespace std;
+int n;
 
 class Node {
 public:
@@ -19,7 +20,7 @@ class MinMaxHeap {
 public:
 
   // Checks if a binary tree is a min/max heap.
-  bool isMinMax(Node* root) {
+  bool isMinMax(Node *root) {
     bool l=true,r=true;
     static int Level = 1;
     bool Odd=Level%2;
@@ -47,16 +48,50 @@ public:
     Level--;
     return l && r;
     }
+
 };
 
 int main()
 {
-  Node N(1,NULL,NULL), N1(5,NULL,NULL), N2(2,NULL,NULL), N3(8,NULL,NULL), N4(4,&N,&N1), N5(7,&N2,&N3), N6(6,&N4,&N5);
-//  Node N(6,NULL,NULL), N1(5,NULL,NULL), N2(9,NULL,NULL), N3(8,NULL,NULL), N4(4,&N,&N1), N5(7,&N2,&N3), N6(3,&N4,&N5);
-
   MinMaxHeap MMH;
 
-  cout << MMH.isMinMax(&N6) << endl;
+  scanf("%d",&n);
+  if(n<=0)
+    return 0;
+  else if(n==1) {
+    printf("YES");
+    return 0;
+  }
+
+  int cur;
+  scanf("%d",&cur);
+  Node *Root = new Node(cur,NULL,NULL);
+  Node **Arr=new Node*[n];
+  Arr[0]=Root;
+  int curIndex=0;
+  Node *CurParent=Arr[curIndex++];
+
+  for(int i=1;i<n;i++) {
+    scanf("%d",&cur);
+    Arr[i]=new Node(cur,NULL,NULL);
+    if(CurParent->left==NULL) {
+      CurParent->left=Arr[i];
+    }
+    else if(CurParent->right==NULL) {
+      CurParent->right=Arr[i];
+    }
+    else {
+      CurParent=Arr[curIndex++];
+      CurParent->left=Arr[i];
+    }
+  }
+
+  if(MMH.isMinMax(Root))
+    printf("YES");
+  else
+    printf("NO");
+
+  delete[] Arr;
 
   return 0;
 }
