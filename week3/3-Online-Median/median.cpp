@@ -61,16 +61,5 @@ int main()
     cout << M.insert(tmp) << endl;
   }
 
-  /*cout << M.insert(5) << endl;
-  cout << M.insert(6) << endl;
-  cout << M.insert(7) << endl;
-  cout << M.insert(4) << endl;
-  cout << M.insert(3) << endl;
-  cout << M.insert(10) << endl;
-  cout << M.insert(20) << endl;
-  cout << M.insert(30) << endl;
-  cout << M.insert(40) << endl;
-  cout << M.insert(50) << endl;*/
-
   return 0;
 }
