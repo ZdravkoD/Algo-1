@@ -1,37 +1,67 @@
 #include <vector>
 #include <algorithm>
-#include <iostream>
+#include <stdio.h>
 
 using namespace std;
 
+int n,k;
+
 class KMin {
+  void BubbleDown(vector<int> &_vector,const int &index)
+  {
+    int leftChildIndex = 2*index + 1;
+    int rightChildIndex = 2*index + 2;
+
+    if(leftChildIndex >= k)
+        return; //index is a leaf
+
+    int minIndex=index;
+
+    if(_vector[index]<_vector[leftChildIndex])
+      minIndex=leftChildIndex;
+
+    if((rightChildIndex<k) && (_vector[minIndex]<_vector[rightChildIndex]))
+      minIndex=rightChildIndex;
+
+    if(minIndex!=index)
+    {
+      //need to swap
+      int temp=_vector[index];
+      _vector[index]=_vector[minIndex];
+      _vector[minIndex]=temp;
+      BubbleDown(_vector,minIndex);
+    }
+  }
+
 public:
-
   // Finds the k-th minimum element in an unsorted collection.
-  int kthMinimum(vector<int> numbers, int k) {
-    int *arr = new int[k];
-    for(int i=0;i<k;i++)
-      arr[i] = numbers[i];
+  int kthMinimum(vector<int> &numbers)
+  {
+    make_heap(numbers.begin(),numbers.end());
+    for(int i=k;i<n;i++) {
+      int temp;
+      scanf("%d",&temp);
+      if(temp < numbers[0]) {
+        numbers[0] = temp;
 
-    make_heap(arr,arr+k);
-    for(int i=k;i<numbers.size();i++) {
-      if(numbers[i] < arr[0]) {
-        arr[0] = numbers[i];
-        make_heap(arr,arr+k);
+        BubbleDown(numbers,0);
         }
       }
-    int res = arr[0];
-    delete[] arr;
-    return res;
+
+    return numbers[0];
     }
 };
 
 int main()
 {
   KMin K;
-  vector<int> Arr = {5,2,3,6,1,4};
-  cout << K.kthMinimum(Arr,3) << endl;
+  scanf("%d%d",&n,&k);
+  vector<int> Arr(k);
 
+  for(int i=0;i<k;i++)
+    scanf("%d",&Arr[i]);
+
+  printf("%d",K.kthMinimum(Arr));
 
   return 0;
 }
