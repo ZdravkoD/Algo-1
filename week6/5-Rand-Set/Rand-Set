@@ -1,0 +1,98 @@
+#include <iostream>
+#include <cstdlib>
+#include <time.h>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+map<int,bool> MyMap;
+
+class MyStruct {
+unsigned int size;
+vector<int> Elements;
+map<int,int> ElementsPositions;
+
+public:
+  MyStruct();
+  void insert(const int &n);
+  void remove(const int &n);
+  bool contains(const int &n);
+  int random();
+};
+
+MyStruct::MyStruct()
+{
+  size=0;
+}
+void MyStruct::insert(const int &n)
+{
+  if(Elements.size()==size) {
+    Elements.push_back(n);
+    }
+  else {
+    Elements[size]=n;
+    }
+
+  ElementsPositions[n]=size;
+  size++;
+}
+void MyStruct::remove(const int &n)
+{
+  if(ElementsPositions.count(n)==0)
+    return;
+
+  Elements[ElementsPositions[n]]=Elements[size];
+  ElementsPositions.erase(n);
+
+  size--;
+}
+bool MyStruct::contains(const int &n)
+{
+  return ElementsPositions.count(n);
+}
+int MyStruct::random()
+{
+  return Elements[rand()%size];
+}
+
+
+int main()
+{
+  srand(time(NULL));
+  cin.sync_with_stdio(false);
+  cin.tie(0);
+
+  MyStruct MyS;
+
+  int n;
+  cin >> n;
+
+  string cmd;
+  int temp;
+  while(n--) {
+    cin >> cmd;
+    if(cmd=="insert") {
+      cin >> temp;
+      MyS.insert(temp);
+      }
+    else if(cmd=="contains") {
+      cin >> temp;
+      if(MyS.contains(temp)) {
+        cout << "true" << endl;
+        }
+      else {
+        cout << "false" << endl;
+        }
+      }
+    else if(cmd=="remove") {
+      cin >> temp;
+      MyS.remove(temp);
+      }
+    else {
+      cout << MyS.random() << endl;
+      }
+    }
+
+  return 0;
+}
