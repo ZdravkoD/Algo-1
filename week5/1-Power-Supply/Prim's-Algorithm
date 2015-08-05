@@ -1,0 +1,84 @@
+#include <iostream>
+#include <vector>
+#include <map>
+#include <climits>
+#include <cmath>
+
+using namespace std;
+
+class Node {
+public:
+bool Visited;
+vector<pair<int,Node*> > Children;
+
+  Node()
+  {
+    Visited=false;
+  }
+  void addChild(const int &Length,Node *Child)
+  {
+    Children.push_back(make_pair(Length,Child));
+  }
+};
+
+/**
+* This function will compute the shortest paths to connect all vertices in a graph
+* by the Prim's algorithm.
+*/
+void primAlgorithm(Node *CurNode,int &CurSum)
+{
+  int min_index;
+  do
+  {
+    int Min=INT_MAX;
+    min_index=-1;
+    for(unsigned int i=0;i<CurNode->Children.size();i++)
+    {
+      if(CurNode->Children[i].second->Visited==false && CurNode->Children[i].first<Min)
+      {
+        Min=CurNode->Children[i].first;
+        min_index=i;
+      }
+    }
+
+    if(min_index!=-1)
+    {
+      CurNode->Visited=true;
+      CurNode->Children[min_index].second->Visited=true;
+      CurSum+=CurNode->Children[min_index].first;
+      primAlgorithm(CurNode->Children[min_index].second,CurSum);
+    }
+  }while(min_index!=-1);
+}
+
+int main()
+{
+  int n, first, second, length;
+  cin >> n;
+  map<int,Node*> Graph;
+
+  for(int i=0;i<n;i++)
+  {
+    cin >> first >> second >> length;
+    if(Graph.count(first)==0)
+    {
+      Graph.insert(make_pair(first,new Node()));
+    }
+    if(Graph.count(second)==0)
+    {
+      Graph.insert(make_pair(second,new Node()));
+    }
+
+    Graph[first]->addChild(length,Graph[second]);
+    Graph[second]->addChild(length,Graph[first]);
+  }
+
+  int path=0;
+  primAlgorithm(Graph.begin()->second,path);
+
+  cout << path << endl;
+
+  Graph.clear();
+
+  return 0;
+}
