@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <map>
+
+using namespace std;
+
+map<int,int> NumCount;
+int N, M, temp;
+
+void insertOnly()
+{
+  for(int j=0;j<M;j++)
+  {
+    scanf("%d",&temp);
+
+    NumCount[temp]=1;
+  }
+}
+
+void increaseOnly()
+{
+  for(int j=0;j<M;j++)
+  {
+    scanf("%d",&temp);
+    map<int,int>::iterator it = NumCount.find(temp);
+
+    if(it!=NumCount.end())
+      it->second++;
+  }
+}
+
+void printOnly()
+{
+  for(int j=0;j<M;j++)
+  {
+    scanf("%d",&temp);
+    map<int,int>::iterator it = NumCount.find(temp);
+
+    if(it!=NumCount.end() && it->second==N-1)
+      printf("%d\n",temp);
+  }
+}
+
+int main()
+{
+  scanf("%d",&N);
+
+  for(int i=0;i<N;i++)
+  {
+    scanf("%d",&M);
+
+    if(i==0)        insertOnly();
+    else if(i<N-1)  increaseOnly();
+    else            printOnly();
+  }
+
+  return 0;
+}
