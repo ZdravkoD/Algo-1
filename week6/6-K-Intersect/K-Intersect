@@ -19,6 +19,7 @@ void justPrint()
 
 void insertOnly()
 {
+  scanf("%d",&M);
   for(int j=0;j<M;j++)
   {
     scanf("%d",&temp);
@@ -29,6 +30,7 @@ void insertOnly()
 
 void increaseOnly()
 {
+  scanf("%d",&M);
   for(int j=0;j<M;j++)
   {
     scanf("%d",&temp);
@@ -41,6 +43,7 @@ void increaseOnly()
 
 void printOnly()
 {
+  scanf("%d",&M);
   for(int j=0;j<M;j++)
   {
     scanf("%d",&temp);
@@ -53,14 +56,13 @@ void printOnly()
 
 void solve()
 {
-  scanf("%d",&M);
   insertOnly();
+
   for(int i=1;i<N-1;i++)
   {
-    scanf("%d",&M);
     increaseOnly();
   }
-  scanf("%d",&M);
+
   printOnly();
 }
 
