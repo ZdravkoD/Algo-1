@@ -6,6 +6,17 @@ using namespace std;
 map<int,int> NumCount;
 int N, M, temp;
 
+void justPrint()
+{
+  scanf("%d",&M);
+  for(int i=0;i<M;i++)
+  {
+    scanf("%d",&temp);
+
+    printf("%d\n",temp);
+  }
+}
+
 void insertOnly()
 {
   for(int j=0;j<M;j++)
@@ -40,18 +51,30 @@ void printOnly()
   }
 }
 
+void solve()
+{
+  scanf("%d",&M);
+  insertOnly();
+  for(int i=1;i<N-1;i++)
+  {
+    scanf("%d",&M);
+    increaseOnly();
+  }
+  scanf("%d",&M);
+  printOnly();
+}
+
 int main()
 {
   scanf("%d",&N);
 
-  for(int i=0;i<N;i++)
+  if(N==1)
   {
-    scanf("%d",&M);
-
-    if(i==0)        insertOnly();
-    else if(i<N-1)  increaseOnly();
-    else            printOnly();
+    justPrint();
+    return 0;
   }
+
+  solve();
 
   return 0;
 }
