@@ -1,0 +1,106 @@
+#include <iostream>
+#include <vector>
+#include <map>
+#include <cmath>
+#include <queue>
+
+using namespace std;
+
+class Node {
+public:
+bool Visited;
+vector<pair<int,Node*> > Children;
+
+  Node()
+  {
+    Visited=false;
+  }
+
+  void addChild(const int &Length,Node *Child)
+  {
+    Children.push_back(make_pair(Length,Child));
+  }
+};
+
+class MyComp {
+public:
+  MyComp() {}
+
+  bool operator() (const pair<int,Node*> &first, const pair<int,Node*> &second) {
+    return first.first > second.first;
+  }
+};
+
+typedef priority_queue<pair<int,Node*>, vector<pair<int,Node*> >, MyComp> PQ;
+PQ PriorityGraph;
+int SecondMinDiff=10001;
+
+void insertToPQ(Node *CurNode)
+{
+  CurNode->Visited=true;
+  for(unsigned int i=0;i<CurNode->Children.size();i++)
+  {
+      if(CurNode->Children[i].second->Visited==false) {
+        PriorityGraph.push(CurNode->Children[i]);
+      }
+  }
+}
+
+/**
+* This function will compute the shortest paths to connect all vertices in a graph
+* by the Prim's algorithm.
+*/
+int primAlgorithm()
+{
+  int CurSum=0;
+  int last=0;
+  while(PriorityGraph.empty()==false)
+  {
+    pair<int,Node*> CurElement = PriorityGraph.top();
+    PriorityGraph.pop();
+    if(CurElement.second->Visited==true) {
+      int diff = abs(CurElement.first-last);
+      if(diff>0) {
+        SecondMinDiff = min(SecondMinDiff, diff);
+      }
+
+      continue;
+    }
+
+    CurSum += CurElement.first;
+    last = CurElement.first;
+    insertToPQ(CurElement.second);
+  }
+  return CurSum + SecondMinDiff;
+}
+
+int main()
+{
+  int n, first, second, length;
+  cin >> n;
+
+  map<int,Node*> Graph;
+
+  for(int i=0;i<n;i++)
+  {
+    cin >> first >> second >> length;
+    if(Graph.count(first)==0)
+    {
+      Graph.insert(make_pair(first,new Node()));
+    }
+    if(Graph.count(second)==0)
+    {
+      Graph.insert(make_pair(second,new Node()));
+    }
+
+    Graph[first]->addChild(length,Graph[second]);
+    Graph[second]->addChild(length,Graph[first]);
+  }
+
+  insertToPQ(Graph.begin()->second);
+  cout << primAlgorithm() << endl;
+
+  Graph.clear();
+
+  return 0;
+}
