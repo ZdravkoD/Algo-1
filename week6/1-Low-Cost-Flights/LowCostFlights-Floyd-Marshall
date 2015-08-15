@@ -1,0 +1,89 @@
+/**
+* Having connecting flights might be annoying but sometimes this is the only way to fit into the budget.
+* You are working on a low-cost flight search engine and you want allow your clients to search for the
+* cheapest possible way to get from airport A to airport B.
+*
+*
+* For solving this task we will use the Floyd-Warshall algorithm.
+*
+*/
+
+#include <cmath>
+#include <stdio.h>
+#include <climits>
+
+using namespace std;
+int n;
+int **dist;
+
+void read()
+{
+  scanf("%d",&n);
+  dist = new int*[n];
+
+  for(int i=0;i<n;i++) {
+    dist[i]=new int[n];
+    dist[i][i]=0;
+    for(int j=0;j<n;j++) {
+      scanf("%d", &dist[i][j]);
+
+      if(dist[i][j]==0 && i!=j)
+        dist[i][j]=INT_MAX;
+    }
+  }
+}
+
+/** Floyd-Warshall algorithm **/
+void setDistances()
+{
+  for(int k=0;k<n;k++)
+  {
+    for(int u=0;u<n;u++)
+    {
+      for(int v=0;v<n;v++)
+      {
+        int a=dist[u][v];
+        int b=dist[u][k] + dist[k][v];
+        if(b<0)
+          b=INT_MAX;
+        dist[u][v] = (a<b ? a : b);
+      }
+    }
+  }
+}
+
+void solve()
+{
+  int m;
+  scanf("%d",&m);
+  for(int i=0;i<m;i++)
+  {
+    int u,v;
+    scanf("%d%d",&u,&v);
+    if(dist[u][v]!=INT_MAX)
+      printf("%d\n",dist[u][v]);
+    else
+      printf("%s\n","NO WAY");
+  }
+}
+
+void clear()
+{
+  for(int i=0;i<n;i++) {
+    delete[] dist[i];
+  }
+  delete[] dist;
+}
+
+int main()
+{
+  read();
+
+  setDistances();
+
+  solve();
+
+  clear();
+
+  return 0;
+}
