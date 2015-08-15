@@ -2,14 +2,40 @@
 #include <vector>
 #include <map>
 #include <cmath>
+#include <climits>
 #include <queue>
 
 using namespace std;
 
+class Node;
+
+/** class representing connection between to vertices **/
+class Edge {
+public:
+int weight;
+Node *Source;
+Node *Dest;
+
+  Edge(Node *Source, Node *Dest, const int &weight) {
+    this->Source=Source;
+    this->Dest=Dest;
+    this->weight=weight;
+  };
+
+/** predefine the equality operator for ease in the algorithm **/
+  Edge operator = (const Edge &Other) {
+    Source=Other.Source;
+    Dest=Other.Dest;
+    weight=Other.weight;
+    return *this;
+  }
+};
+
+/** class representing a vertex in the graph **/
 class Node {
 public:
 bool Visited;
-vector<pair<int,Node*> > Children;
+vector<Edge> Children;
 
   Node()
   {
@@ -18,32 +44,49 @@ vector<pair<int,Node*> > Children;
 
   void addChild(const int &Length,Node *Child)
   {
-    Children.push_back(make_pair(Length,Child));
+    Children.push_back(Edge(this,Child,Length));
   }
 };
 
+/** class that compares two Edges(connections) in a graph **/
 class MyComp {
 public:
   MyComp() {}
 
-  bool operator() (const pair<int,Node*> &first, const pair<int,Node*> &second) {
-    return first.first > second.first;
+  bool operator() (const Edge &first, const Edge &second) {
+    return first.weight > second.weight;
   }
 };
 
-typedef priority_queue<pair<int,Node*>, vector<pair<int,Node*> >, MyComp> PQ;
-PQ PriorityGraph;
-int SecondMinDiff=10001;
+typedef priority_queue<Edge, vector<Edge>, MyComp> PQ;
+PQ PriorityGraph; // Queue with Edges we want to use to get MST
+Edge MinEdge(NULL, NULL, INT_MAX); // Unused edge with minimum weight
 
+/** Sets CurNode to visited and adds all its Edges to the priority queue **/
 void insertToPQ(Node *CurNode)
 {
   CurNode->Visited=true;
   for(unsigned int i=0;i<CurNode->Children.size();i++)
   {
-      if(CurNode->Children[i].second->Visited==false) {
+      if(CurNode->Children[i].Dest->Visited==false) {
         PriorityGraph.push(CurNode->Children[i]);
       }
   }
+}
+
+/** Gets the maximum weighted Edge from CurNode's children that is below Bound number **/
+int getMaxBelow(Node *CurNode,const int &Bound)
+{
+  int maxBelow=-1;
+  for(unsigned int i=0;i<CurNode->Children.size();i++)
+  {
+    if(CurNode->Children[i].weight<Bound)
+    {
+      maxBelow = max(maxBelow,CurNode->Children[i].weight);
+    }
+  }
+
+  return maxBelow;
 }
 
 /**
@@ -53,25 +96,30 @@ void insertToPQ(Node *CurNode)
 int primAlgorithm()
 {
   int CurSum=0;
-  int last=0;
   while(PriorityGraph.empty()==false)
   {
-    pair<int,Node*> CurElement = PriorityGraph.top();
+    Edge CurElement = PriorityGraph.top();
+
     PriorityGraph.pop();
-    if(CurElement.second->Visited==true) {
-      int diff = abs(CurElement.first-last);
-      if(diff>0) {
-        SecondMinDiff = min(SecondMinDiff, diff);
+    if(CurElement.Dest->Visited==true) {
+      if(MinEdge.weight>CurElement.weight) {
+        MinEdge=CurElement;
       }
 
       continue;
     }
 
-    CurSum += CurElement.first;
-    last = CurElement.first;
-    insertToPQ(CurElement.second);
+    CurSum += CurElement.weight;
+    insertToPQ(CurElement.Dest);
   }
-  return CurSum + SecondMinDiff;
+  Node *Source = MinEdge.Source;
+  Node *Dest = MinEdge.Dest;
+  int weight = MinEdge.weight;
+
+  int add  = weight;
+      add -= max( getMaxBelow(Source, weight), getMaxBelow(Dest, weight) );
+
+  return CurSum + add;
 }
 
 int main()
