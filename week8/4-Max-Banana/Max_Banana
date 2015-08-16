@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+int n;
+int **Matrix;
+
+void init()
+{
+  Matrix = new int*[n];
+  for(int i=0;i<n;i++) {
+    Matrix[i] = new int[n];
+  }
+}
+
+void read()
+{
+  for(int i=0;i<n;i++) {
+    for(int j=0;j<n;j++) {
+      scanf("%d",&Matrix[i][j]);
+    }
+  }
+}
+
+int solve()
+{
+  int tempI=0, tempJ=n-1;
+
+  // step 1
+  for(int j=tempJ-1;j>=0;j--) {
+    Matrix[tempI][j] += Matrix[tempI][j+1];
+  }
+  for(int i=tempI+1;i<n;i++) {
+    Matrix[i][tempJ] += Matrix[i-1][tempJ];
+  }
+  tempI++;
+  tempJ--;
+
+  // step 2
+  while(tempI<n && tempJ>=0) {
+      for(int i=tempI;i<n;i++) {
+        Matrix[i][tempJ] += max(Matrix[i-1][tempJ], Matrix[i][tempJ+1]); // get best from top and left
+      }
+      for(int j=tempJ-1;j>=0;j--) {
+        Matrix[tempI][j] += max(Matrix[tempI-1][j], Matrix[tempI][j+1]); // get best from top and left
+      }
+
+      tempI++;
+      tempJ--;
+  }
+
+  /** return bottom left corner **/
+  return Matrix[n-1][0];
+}
+
+void clear()
+{
+  for(int i=0;i<n;i++) {
+    delete[] Matrix[i];
+  }
+
+  delete[] Matrix;
+}
+
+int main()
+{
+  scanf("%d",&n);
+
+  init();
+  read();
+
+  printf("%d",solve());
+
+  clear();
+
+  return 0;
+}
