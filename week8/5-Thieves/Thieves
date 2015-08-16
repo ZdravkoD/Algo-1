@@ -1,0 +1,67 @@
+#include <iostream>
+#include <queue>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+class Node {
+public:
+int weight;
+int val;
+double Percent;
+  Node () {}
+};
+
+class Comp {
+public:
+  Comp() {}
+
+  bool operator() (const Node &lhs, const Node &rhs) {
+    return lhs.Percent < rhs.Percent;
+  }
+};
+
+priority_queue<Node,vector<Node>, Comp> Items;
+int N,W;
+
+void read()
+{
+  cin >> N >> W;
+
+  int item_weight, item_value;
+  for(int i=0;i<W;i++)
+  {
+    cin >> item_weight >> item_value;
+    if(item_weight>W)
+      continue;
+
+    Node N;
+    N.Percent = item_value*1.0/item_weight;
+    N.val = item_value;
+    N.weight = item_weight;
+
+    Items.push(N);
+  }
+}
+
+int main()
+{
+  cin.sync_with_stdio(false);
+  cin.tie(0);
+
+  read();
+
+  int curSum = 0;
+  int curWeight = 0;
+
+  do {
+    curWeight += Items.top().weight;
+    curSum += Items.top().val;
+    Items.pop();
+  }while(Items.empty()==false && curWeight+Items.top().weight <= W);
+
+  cout << curSum << endl;
+
+  return 0;
+}
