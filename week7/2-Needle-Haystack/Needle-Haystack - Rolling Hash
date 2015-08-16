@@ -1,0 +1,60 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+#define BASE 27
+unsigned int BigBase; // to be computed
+
+int hashFunction(const string &str)
+{
+  unsigned int hash=str[0]-'a';
+  for(unsigned int i=1;i<str.length();i++)
+  {
+    hash = hash*BASE + str[i]-'a';
+  }
+
+  return hash;
+}
+
+void rollingHash(const string &bigWord, const string &smallWord)
+{
+  unsigned int lenSmall=smallWord.length();
+  unsigned int lenBig=bigWord.length();
+  unsigned int curHash = hashFunction(bigWord.substr(0,lenSmall));
+  unsigned int targetHash = hashFunction(smallWord);
+
+  if(curHash==targetHash) {
+    cout << 0 << endl;
+  }
+
+  for(unsigned int i=lenSmall;i<lenBig;i++)
+  {
+    curHash -= (bigWord[i-lenSmall]-'a')*BigBase;
+    curHash = curHash*BASE + bigWord[i]-'a';
+
+    if(curHash==targetHash) {
+      cout << i-lenSmall+1 << endl;
+    }
+  }
+}
+
+int main()
+{
+  cin.sync_with_stdio(false);
+  cin.tie(0);
+
+  string bigWord;
+  string smallWord;
+  cin >> bigWord >> smallWord;
+  int smallLen=smallWord.length();
+
+  BigBase=1;
+  for(int i=1;i<smallLen;i++)
+    BigBase*=BASE;
+
+  rollingHash(bigWord,smallWord);
+
+  return 0;
+}
