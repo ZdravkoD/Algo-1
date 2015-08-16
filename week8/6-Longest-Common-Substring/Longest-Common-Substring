@@ -49,7 +49,7 @@ unsigned int getHash(const string &str)
 {
   unsigned int hash=str[0];
 
-  int len = str.length();
+  unsigned int len = str.length();
   for(unsigned int i=1;i<len;i++)
   {
     hash = hash*BASE + str[i];
@@ -75,15 +75,15 @@ void solve()
       return;
     }
 
-    for(unsigned int stepLen=curLen;stepLen<=LenSmall;stepLen++)
+    for(unsigned int stepLenA=curLen;stepLenA<=LenSmall;stepLenA++)
     {
-      for(unsigned int i=curLen;i<LenBig;i++)
+      for(unsigned int stepLenB=curLen;stepLenB<LenBig;stepLenB++)
       {
-        RollingHashBig -= (StrB[i-curLen]) * pows[curLen-1];
-        RollingHashBig = RollingHashBig*BASE + StrB[i];
+        RollingHashBig -= (StrB[stepLenB-curLen]) * pows[curLen-1];
+        RollingHashBig = RollingHashBig*BASE + StrB[stepLenB];
 
         if(RollingHashBig==RollingHashSmall) {
-          cout << StrB.substr(i-curLen+1,curLen) << endl;
+          cout << StrB.substr(stepLenB-curLen+1,curLen) << endl;
           return;
         }
       }
@@ -94,8 +94,8 @@ void solve()
         RollingHashBig = HashBig;
         RollingHashSmall = LastHashSmall;
 
-        RollingHashSmall -= (StrA[stepLen-curLen]) * pows[curLen-1];
-        RollingHashSmall = RollingHashSmall*BASE + StrA[stepLen];
+        RollingHashSmall -= (StrA[stepLenA-curLen]) * pows[curLen-1];
+        RollingHashSmall = RollingHashSmall*BASE + StrA[stepLenA];
 
         LastHashSmall = RollingHashSmall;
 
