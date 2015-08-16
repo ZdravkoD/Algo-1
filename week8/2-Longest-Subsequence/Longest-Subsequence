@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <climits>
+#include <vector>
+
+using namespace std;
+int n;
+vector<int> Sequence;
+
+void read()
+{
+  scanf("%d",&n);
+
+  int temp;
+  for(int i=0;i<n;i++)
+  {
+    scanf("%d",&temp);
+    Sequence.push_back(temp);
+  }
+}
+
+int solve(int &startIndex,int &endIndex)
+{
+  int maxLen=1, curLen=1;
+  int prev=Sequence[0];
+  int tempS=0,tempE=0;
+
+  for(int i=1;i<n;i++)
+  {
+    tempE++;
+    if(Sequence[i]>prev)
+    {
+      curLen++;
+    }
+    else
+    {
+      if(curLen>maxLen)
+      {
+        maxLen=curLen;
+        startIndex=tempS;
+        endIndex=tempE;
+      }
+      curLen=1;
+      tempS=tempE;
+    }
+
+    prev=Sequence[i];
+  }
+
+  return maxLen;
+}
+
+int main()
+{
+  read();
+  int startIndex=0,endIndex=1;
+
+  printf("%d\n",solve(startIndex,endIndex));
+
+  for(int i=startIndex;i<endIndex;i++)
+  {
+    printf("%d ", Sequence[i]);
+  }
+
+  return 0;
+}
