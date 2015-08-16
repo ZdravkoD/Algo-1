@@ -1,0 +1,149 @@
+/**
+* Shortest path between 2 points.
+*
+* For solving this task we will use Dijsktra's algorithm
+*/
+
+#include <iostream>
+#include <set>
+#include <vector>
+#include <map>
+#include <queue>
+
+using namespace std;
+
+int startPoint, endPoint;
+
+class Node {
+public:
+bool Visited;
+int index;
+Node *Parent;
+int ParentDist;
+vector<pair<int,Node*> > Children;
+
+  Node(const int& index)  {
+    Visited=false;
+    this->index=index;
+    Parent=NULL;
+    }
+
+  void addChild(const int &Length,Node *Child)
+  {
+    Children.push_back(make_pair(Length,Child));
+  }
+};
+
+class MyComp {
+public:
+  MyComp() {}
+
+  bool operator() (const pair<int,Node*> &first, const pair<int,Node*> &second) {
+    return first.first > second.first;
+  }
+};
+
+typedef priority_queue<pair<int,Node*>, vector<pair<int,Node*> >, MyComp> PQ;
+PQ PriorityGraph;
+
+int getReversePath(Node *endNode,vector<int> &Points)
+{
+  Node *CurNode = endNode;
+  int dist=0;
+
+  while(CurNode!=NULL) {
+    Points.push_back(CurNode->index);
+    dist+=CurNode->ParentDist;
+    CurNode=CurNode->Parent;
+  }
+
+  return dist;
+}
+
+void insertToPQ(Node *CurNode)
+{
+  CurNode->Visited=true;
+  for(unsigned int i=0;i<CurNode->Children.size();i++)
+  {
+      if(CurNode->Children[i].second->Visited==false)
+      {
+        if(CurNode->Children[i].second->Parent!=NULL) {
+          if(CurNode->Children[i].second->ParentDist>CurNode->Children[i].first) {
+            CurNode->Children[i].second->Parent=CurNode;
+            CurNode->Children[i].second->ParentDist=CurNode->Children[i].first;
+          }
+        }
+        else {
+          CurNode->Children[i].second->Parent=CurNode;
+          CurNode->Children[i].second->ParentDist=CurNode->Children[i].first;
+        }
+
+        PriorityGraph.push(CurNode->Children[i]);
+      }
+  }
+}
+
+int Dijkstra(Node *startNode, vector<int> &Points)
+{
+  startNode->Parent=NULL;
+  insertToPQ(startNode);
+
+  while(PriorityGraph.empty()==false)
+  {
+    pair<int,Node*> CurElement = PriorityGraph.top();
+    PriorityGraph.pop();
+
+    if(CurElement.second->index==endPoint) {
+      return getReversePath(CurElement.second,Points);
+    }
+
+    if(CurElement.second->Visited==true)
+      continue;
+
+     insertToPQ(CurElement.second);
+  }
+
+  return -1;
+}
+
+void read(map<int,Node*> &Graph)
+{
+  int rubish, n, first, second, length;
+  cin >> rubish >> n >> startPoint >> endPoint;
+
+  for(int i=0;i<n;i++)
+  {
+    cin >> first >> second >> length;
+    if(Graph.count(first)==0)
+    {
+      Graph.insert(make_pair(first,new Node(first)));
+    }
+    if(Graph.count(second)==0)
+    {
+      Graph.insert(make_pair(second,new Node(second)));
+    }
+
+    Graph[first]->addChild(length,Graph[second]);
+    Graph[second]->addChild(length,Graph[first]);
+  }
+}
+
+int main()
+{
+  map<int,Node*> Graph;
+  vector<int> Points;
+
+  read(Graph);
+
+  /** Print shortest path length **/
+  cout << Dijkstra(Graph[startPoint],Points) << endl;
+
+  /** Print shortest path points **/
+  for(int i=Points.size()-1;i>=0;i--) {
+    cout << Points[i] << " ";
+  }
+
+  Graph.clear();
+
+  return 0;
+}
