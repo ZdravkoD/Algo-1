@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <climits>
+#include <cmath>
+#include <queue>
+
+using namespace std;
+
+class Node{
+public:
+bool isVisited;
+int MinDistanceFromStartPoint;
+int Altitude;
+vector<Node*> Connections;
+
+  Node(){
+    MinDistanceFromStartPoint=INT_MAX;
+  }
+};
+
+/** For Priority queue, compares two nodes based on their distance from the start point **/
+class Comp {
+public:
+  Comp(){}
+  bool operator() (const Node *lhs, const Node *rhs) {
+    return lhs->MinDistanceFromStartPoint > rhs->MinDistanceFromStartPoint;
+  }
+};
+
+priority_queue<Node*, vector<Node*>, Comp> VisitedQueue;
+int n, iStart, jStart, iEnd, jEnd;
+Node ***Matrix;
+
+/** Initialize Matrix with nodes **/
+void init()
+{
+  Matrix = new Node**[n];
+  for(int i=0;i<n;i++)
+  {
+    Matrix[i]=new Node*[n];
+    for(int j=0;j<n;j++) {
+      Matrix[i][j] = new Node();
+    }
+  }
+}
+
+/** Read Matrix of nodes **/
+void read()
+{
+  for(int i=0;i<n;i++)  {
+    for(int j=0;j<n;j++)  {
+      scanf("%d",&Matrix[i][j]->Altitude);
+
+      /** Set connections to current node **/
+      for(int a=max(0,i-1);a<=i+1 && a<n;a++) {
+        for(int b=max(0,j-1);b<=j+1 && b<n;b++) {
+          Matrix[i][j]->Connections.push_back(Matrix[a][b]);
+        }
+      }
+    }
+  }
+
+  Matrix[iStart][jStart]->MinDistanceFromStartPoint=0;
+}
+
+/** Solve via Dijkstra's algorithm **/
+int solve()
+{
+  while(VisitedQueue.empty()==false)
+  {
+    Node *CurNode = VisitedQueue.top();
+    VisitedQueue.pop();
+    CurNode->isVisited=true;
+
+    if(CurNode==Matrix[iEnd][jEnd])
+    {
+      return CurNode->MinDistanceFromStartPoint;
+    }
+
+    /** Insert not visited connections to priority queue**/
+    for(unsigned int i=0;i<CurNode->Connections.size();i++) {
+      if(CurNode->Connections[i]->isVisited==false) {
+        int *curDist = &CurNode->Connections[i]->MinDistanceFromStartPoint;
+
+        int potDist  = CurNode->MinDistanceFromStartPoint;
+            potDist += abs(CurNode->Altitude - CurNode->Connections[i]->Altitude) + 1;
+
+        (*curDist) = min((*curDist), potDist);
+
+        VisitedQueue.push(CurNode->Connections[i]);
+      }
+    }
+  }
+
+  return -1;
+}
+
+/** Deletes dynamic memory **/
+void clear()
+{
+  for(int i=0;i<n;i++) {
+    for(int j=0;j<n;j++) {
+      delete Matrix[i][j];
+    }
+    delete[] Matrix[i];
+  }
+
+  delete[] Matrix;
+}
+
+int main()
+{
+  scanf("%d%d%d%d%d",&n,&iStart,&jStart,&iEnd,&jEnd);
+
+  init();
+  read();
+
+  VisitedQueue.push(Matrix[iStart][jStart]);
+  int answ = solve();
+  if(answ==-1)
+    printf("IMPOSSIBLE!\n");
+  else
+    printf("%d\n",answ);
+
+  clear();
+
+  return 0;
+}
