@@ -1,0 +1,94 @@
+#include <iostream>
+#include <map>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+class Node {
+public:
+int distFromEnd;
+
+int debugIndex;
+
+vector<Node*> Parents;
+vector<Node*> Children;
+
+  Node(int debugIndex) {
+    distFromEnd=0;
+
+    this->debugIndex = debugIndex;
+  }
+};
+
+map<int,Node*> Graph;
+queue<Node*> bfsQ;
+int startIndex, endIndex;
+int K;
+
+void read()
+{
+  int n;
+  cin >> n;
+
+  int first, second;
+  for(int i=0;i<n;i++)
+  {
+    cin >> first >> second;
+    if(Graph.count(first)==0)
+    {
+      Graph.insert(make_pair(first,new Node(first)));
+    }
+    if(Graph.count(second)==0)
+    {
+      Graph.insert(make_pair(second,new Node(second)));
+    }
+
+    Graph[first]->Children.push_back(Graph[second]);
+    Graph[second]->Parents.push_back(Graph[first]);
+  }
+
+  cin >> startIndex >> endIndex >> K;
+}
+
+/** Reverse BFS, starting from endIndex, searching for startIndex **/
+int solve()
+{
+  int cnt=0;
+
+  while(bfsQ.empty()==false)
+  {
+    Node *CurNode = bfsQ.front();
+    bfsQ.pop();
+
+    if(CurNode==Graph[startIndex] && CurNode->distFromEnd==K) {
+      cnt++;
+      continue;
+    }
+
+    for(int i=0;i<CurNode->Parents.size();i++)
+    {
+      CurNode->Parents[i]->distFromEnd=CurNode->distFromEnd+1;
+      bfsQ.push(CurNode->Parents[i]);
+    }
+  }
+
+  return cnt;
+}
+
+void clear()
+{
+  Graph.clear();
+}
+
+int main()
+{
+  read();
+
+  bfsQ.push(Graph[endIndex]);
+  cout << solve() << endl;
+
+  clear();
+
+  return 0;
+}
