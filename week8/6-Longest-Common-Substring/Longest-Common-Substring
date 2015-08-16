@@ -1,0 +1,121 @@
+/**
+* We will solve this task by making double rolling hash.
+*
+* We will take the length of the shorter string(Len_Small) and will hash the first Len_Small characters
+* from both strings. Then we will do rolling hash to the end of both, after that we decrement Len_Small by one
+* and we start from the beginning of both strings until we find an equal hash. The first equal hash we find
+* will be the longest subsequence.
+**/
+
+#include <iostream>
+#include <string>
+#include <cmath>
+#include <vector>
+
+#define BASE 127
+
+using namespace std;
+
+string StrA, StrB;
+vector<unsigned int> pows(1000);
+unsigned int LenSmall;
+unsigned int LenBig;
+
+/** StrA will be the shorter string **/
+void read()
+{
+  getline(cin,StrA);
+  getline(cin,StrB);
+
+  if(StrA.length()>StrB.length()) {
+    string temp = StrA;
+    StrA = StrB;
+    StrB = temp;
+  }
+}
+
+void init()
+{
+  LenSmall = StrA.length();
+  LenBig = StrB.length();
+
+  pows[0]=1;
+  for(unsigned int i=1;i<=LenSmall;i++) {
+    pows[i]=pows[i-1]*BASE;
+  }
+}
+
+unsigned int getHash(const string &str)
+{
+  unsigned int hash=str[0];
+
+  int len = str.length();
+  for(unsigned int i=1;i<len;i++)
+  {
+    hash = hash*BASE + str[i];
+  }
+
+  return hash;
+}
+
+void solve()
+{
+  unsigned int curLen = LenSmall;
+  while(curLen>0)
+  {
+    unsigned int HashSmall = getHash(StrA.substr(0,curLen));
+    unsigned int HashBig = getHash(StrB.substr(0,curLen));
+    unsigned int RollingHashBig = HashBig;
+    unsigned int RollingHashSmall = HashSmall;
+
+    unsigned int LastHashSmall = HashSmall;
+
+    if(HashSmall==HashBig) {
+      cout << StrB.substr(0,curLen) << endl;
+      return;
+    }
+
+    for(unsigned int stepLen=curLen;stepLen<=LenSmall;stepLen++)
+    {
+      for(unsigned int i=curLen;i<LenBig;i++)
+      {
+        RollingHashBig -= (StrB[i-curLen]) * pows[curLen-1];
+        RollingHashBig = RollingHashBig*BASE + StrB[i];
+
+        if(RollingHashBig==RollingHashSmall) {
+          cout << StrB.substr(i-curLen+1,curLen) << endl;
+          return;
+        }
+      }
+
+      /** return StrB, roll StrA forward **/
+      if(curLen!=LenSmall)
+      {
+        RollingHashBig = HashBig;
+        RollingHashSmall = LastHashSmall;
+
+        RollingHashSmall -= (StrA[stepLen-curLen]) * pows[curLen-1];
+        RollingHashSmall = RollingHashSmall*BASE + StrA[stepLen];
+
+        LastHashSmall = RollingHashSmall;
+
+        if(RollingHashBig==RollingHashSmall) {
+          cout << StrB.substr(LenSmall-curLen-1,curLen) << endl;
+          return;
+        }
+      }
+    }
+    curLen--;
+  }
+}
+
+int main()
+{
+  read();
+
+  init();
+
+  solve();
+
+  return 0;
+}
