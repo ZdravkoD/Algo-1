@@ -1,0 +1,94 @@
+/**
+* Implement a program which finds all possible ways of building a sum out of different coins.
+* The coins you have are of value 1, 2, 5, 10, 20, 50 and 100.
+*
+* The goal sum is S, 1 <= S <= 1000.
+* Example input : 25
+* Example output : 68
+**/
+
+#include <iostream>
+
+using namespace std;
+
+int Val[7] = {1, 2, 5, 10, 20, 50, 100};
+int MultVal[7][1001];
+int S;
+
+void init()
+{
+  for(int i=0;i<7;i++)
+  {
+    MultVal[i][0]=0;
+    for(int j=1;j<1001;j++)
+    {
+      MultVal[i][j]=MultVal[i][j-1]+Val[i];
+      if(MultVal[i][j]>S)
+        break;
+    }
+  }
+}
+
+int solve()
+{
+  int i0=0,i1=0,i2=0,i3=0,i4=0,i5=0,i6=0;
+  int curSum=0;
+  int cnt=0;
+
+  while(MultVal[0][i0]<=S)
+  {
+    curSum+=MultVal[0][i0];
+    cnt+=(MultVal[0][i0]==S);
+    i1=0;
+    while(MultVal[1][i1]+curSum<=S)
+    {
+      curSum+=MultVal[1][i1];
+      cnt+=(MultVal[1][i1]>0 && curSum==S);
+      i2=0;
+      while(MultVal[2][i2]+curSum<=S)  {
+        curSum+=MultVal[2][i2];
+        cnt+=(MultVal[2][i2]>0 && curSum==S);
+        i3=0;
+        while(MultVal[3][i3]+curSum<=S)  {
+          curSum+=MultVal[3][i3];
+          cnt+=(MultVal[3][i3]>0 && curSum==S);
+          i4=0;
+          while(MultVal[4][i4]+curSum<=S)  {
+            curSum+=MultVal[4][i4];
+            cnt+=(MultVal[4][i4]>0 && curSum==S);
+            i5=0;
+            while(MultVal[5][i5]+curSum<=S)  {
+              curSum+=MultVal[5][i5];
+              cnt+=(MultVal[5][i5]>0 && curSum==S);
+              i6=0;
+              while(MultVal[6][i6]+curSum<=S)  {
+                curSum+=MultVal[6][i6];
+                cnt+=(MultVal[6][i6]>0 && curSum==S);
+                curSum-=MultVal[6][i6++];
+              }
+              curSum-=MultVal[5][i5++];
+            }
+            curSum-=MultVal[4][i4++];
+          }
+          curSum-=MultVal[3][i3++];
+        }
+        curSum-=MultVal[2][i2++];
+      }
+      curSum-=MultVal[1][i1++];
+    }
+    curSum-=MultVal[0][i0++];
+  }
+
+  return cnt;
+}
+
+int main()
+{
+  cin >> S;
+
+  init();
+
+  cout << solve() << endl;
+
+  return 0;
+}
