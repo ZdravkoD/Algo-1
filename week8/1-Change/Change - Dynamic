@@ -1,0 +1,57 @@
+/**
+* Implement a program which finds all possible ways of building a sum out of different coins.
+* The coins you have are of value 1, 2, 5, 10, 20, 50 and 100.
+*
+* The goal sum is S, 1 <= S <= 1000.
+* Example input : 25
+* Example output : 68
+**/
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int Val[] = {1, 2, 5, 10, 20, 50, 100};
+int S;
+
+void print(vector<vector<int> > &Vec)
+{
+  for(int i=0;i<Vec.size();i++)
+  {
+    for(int j=0;j<Vec[i].size();j++)
+    {
+      cout << Vec[i][j] << " ";
+    }
+    cout << endl;
+  }
+
+  cout << endl;
+}
+
+int f_NonRec()
+{
+  vector<vector<int> > table(S+1, vector<int>(7, 1));
+
+  for(int i=2;i<=S;i++)
+  {
+    for(int j=1;j<7;j++)
+    {
+      if(i<Val[j])
+        table[i][j]=table[i][j-1];
+      else
+        table[i][j]=table[i][j-1] + table[i-Val[j]][j];
+    }
+  }
+
+  print(table);
+  return table[S][6];
+}
+
+int main()
+{
+  cin >> S;
+  cout << f_NonRec() << endl;
+
+  return 0;
+}
