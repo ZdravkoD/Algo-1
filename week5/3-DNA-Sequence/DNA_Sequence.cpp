@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <queue>
 
 using namespace std;
 
@@ -16,23 +17,25 @@ bool FirstCon, LastCon;
   Node(const string &Type)
   {
     Visited=false;
-    this->Type=Type;
-    FirstCon=false;
-    LastCon=false;
+    FirstCon=false; // true if connected on left
+    LastCon=false; // true if connected on right
 
-    int len = Type.length();
+    this->Type=Type;
     First = Type.substr(0,3);
-    Last = Type.substr(len-3,3);
+    Last = Type.substr(Type.size()-3,3);
   }
 };
 
 int N;
 map<string,vector<Node*>> NucConnections;
-vector<string> Path;
+queue<string> Path;
 Node *StartNode;
 
 bool read()
 {
+  cin.sync_with_stdio(false);
+  cin.tie(0);
+
   cin >> N;
 
   for(int i=0;i<N;i++)  {
@@ -55,6 +58,8 @@ bool read()
   return SingleConnectionCount<=2; // if there are more than two nucleotides with only one connection
 }
 
+bool checkConnection(const string &End, const int &NucCount);
+
 bool solve(Node *CurNode,int NucCount)
 {
   string CurType = CurNode->Type;
@@ -62,74 +67,72 @@ bool solve(Node *CurNode,int NucCount)
     return false;
 
   if(++NucCount==N) {
-    Path.push_back(CurNode->Type);
+    Path.push(CurNode->Type);
     return true;
   }
 
   CurNode->Visited=true;
 
-  if(!CurNode->FirstCon)  {
-    for(unsigned int i=0;i<NucConnections[CurNode->First].size();i++)  {
-      string f = NucConnections[CurNode->First][i]->First;
-      string l =NucConnections[CurNode->First][i]->Last;
-      if(NucConnections[CurNode->First][i]->First == CurNode->First)
-        NucConnections[CurNode->First][i]->FirstCon=true;
-      else
-        NucConnections[CurNode->First][i]->LastCon=true;
+  if(!CurNode->FirstCon)  { // if not connected on left
+    if(checkConnection(CurNode->First,NucCount))  {
+      Path.push(CurNode->Type.substr(3,CurNode->Type.size()-3)); // add remaining nucleotide
 
-
-      if(solve(NucConnections[CurNode->First][i], NucCount))  {
-        int len = CurNode->Type.size();
-        Path.push_back(CurNode->Type.substr(3,len));
-
-        return true;
-      }
+      return true;
     }
   }
 
-  if(!CurNode->LastCon)  {
-    for(unsigned int i=0;i<NucConnections[CurNode->Last].size();i++)  {
-      string f = NucConnections[CurNode->Last][i]->First;
-      string l =NucConnections[CurNode->Last][i]->Last;
-      if(NucConnections[CurNode->Last][i]->First == CurNode->Last)
-        NucConnections[CurNode->Last][i]->FirstCon=true;
-      else
-        NucConnections[CurNode->Last][i]->LastCon=true;
+  if(!CurNode->LastCon)  { // if not connected on right
+    if(checkConnection(CurNode->Last,NucCount)) {
+      Path.push(CurNode->Type.substr(0,CurNode->Type.size()-3)); // add remaining nucleotide
 
-      if(solve(NucConnections[CurNode->Last][i], NucCount))  {
-        int len = CurNode->Type.size();
-        Path.push_back(CurNode->Type.substr(0,len-3));
-
-        return true;
-      }
+      return true;
     }
   }
 
   CurNode->FirstCon=false;
   CurNode->LastCon=false;
-
   CurNode->Visited=false;
 
   return false;
 }
 
+bool checkConnection(const string &End, const int &NucCount)
+{
+  for(unsigned int i=0;i<NucConnections[End].size();i++)  { // check all nucleotides with this end
+    if(NucConnections[End][i]->First == End)
+      NucConnections[End][i]->FirstCon=true;
+    else
+      NucConnections[End][i]->LastCon=true;
+
+
+    if(solve(NucConnections[End][i], NucCount))  {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+void clear()
+{
+  for(map<string,vector<Node*>>::iterator it = NucConnections.begin(); it!=NucConnections.end();++it) {
+    for(unsigned int i=0;i<it->second.size();i++)  {
+      delete it->second[i];
+    }
+  }
+}
+
 int main()
 {
-  cin.sync_with_stdio(false);
-  cin.tie(0);
-
-  if(!read()) {
+  if(!read() || !solve(StartNode,0)) {
     cout << "IMPOSSIBLE" << endl;
   }
   else {
-    if(!solve(StartNode,0)) {
-      cout << "IMPOSSIBLE" << endl;
-    }
-    else {
-      cout << endl;
-      for(unsigned int i=0;i<Path.size();i++)  {
-        cout << Path[i];
-      }
+    cout << endl;
+
+    while(Path.empty()==false)  {
+      cout << Path.front() << " ";
+      Path.pop();
     }
   }
 
